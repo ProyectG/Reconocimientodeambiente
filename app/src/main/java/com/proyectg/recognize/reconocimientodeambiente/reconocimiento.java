@@ -1,7 +1,11 @@
 package com.proyectg.recognize.reconocimientodeambiente;
 
+import android.content.Context;
+import android.content.Intent;
+import android.media.AudioManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -10,13 +14,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.media.MediaPlayer;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
 
 import android.widget.TextView;
+
+import java.io.IOException;
 
 public class reconocimiento extends AppCompatActivity {
 
@@ -28,6 +38,12 @@ public class reconocimiento extends AppCompatActivity {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
+
+    MediaPlayer reproductor;
+    private Button comenzar;
+
+
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -39,6 +55,18 @@ public class reconocimiento extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reconocimiento);
+
+        //Inicializo el boton que se llama playstart (gran nombre) en activity_reconocimiento.xml
+        comenzar = (Button) findViewById(R.id.playstart);
+        comenzar.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.i("DEMO", "CUIDADO");
+                play();
+                //Intent startIntent = new Intent(reconocimiento.this, reconocimiento.class);
+               // startActivity(startIntent);
+            }
+        });
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -63,6 +91,66 @@ public class reconocimiento extends AppCompatActivity {
     }
 
 
+    public void onCLick(View v)
+    {
+        if(v == comenzar) {
+            play();
+        }
+        else if (reproductor.isPlaying())
+        {
+            stop();
+        }
+    }
+
+    public void play()
+    {
+
+        // 1. Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(reconocimiento.this);
+
+// 2. Chain together various setter methods to set the dialog characteristics
+        builder.setMessage(R.string.action_settings)
+                .setTitle(R.string.app_name);
+
+// 3. Get the AlertDialog from create()
+        AlertDialog dialog = builder.create();
+
+
+        reproductor = new MediaPlayer();
+        try
+        {
+            String url="http://192.240.102.133:12197/stream";
+            reproductor.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            reproductor.setDataSource(url);
+            reproductor.prepare();
+            reproductor.start();
+        }
+        catch(IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        catch (IllegalStateException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+
+
+    }
+
+
+    private void stop() {
+        if (reproductor.isPlaying()) {
+            reproductor.stop();
+            reproductor.release();
+
+        }
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -84,6 +172,8 @@ public class reconocimiento extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     /**
      * A placeholder fragment containing a simple view.
