@@ -186,9 +186,22 @@ public class reconocimiento extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
+            //inicializo en null
             View rootView = inflater.inflate(R.layout.fragment_reconocimiento, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            if(getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+                rootView = inflater.inflate(R.layout.fragment_reconocimiento, container, false);
+                TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+                return rootView;
+
+            }
+            if(getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
+                rootView = inflater.inflate(R.layout.fragment_web, container, false);
+                TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+                return rootView;
+            }
+
+                //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
     }
