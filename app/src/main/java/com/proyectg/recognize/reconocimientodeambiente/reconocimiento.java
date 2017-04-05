@@ -1,10 +1,14 @@
 package com.proyectg.recognize.reconocimientodeambiente;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -58,15 +62,15 @@ public class reconocimiento extends AppCompatActivity {
 
         //Inicializo el boton que se llama playstart (gran nombre) en activity_reconocimiento.xml
         comenzar = (Button) findViewById(R.id.playstart);
+        //generamos el evento
         comenzar.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View v) {
-                Log.i("DEMO", "CUIDADO");
-                play();
-                //Intent startIntent = new Intent(reconocimiento.this, reconocimiento.class);
-               // startActivity(startIntent);
+                play(); //Inicializamos la funcion
             }
         });
 
+        reproductor = new MediaPlayer();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -90,65 +94,44 @@ public class reconocimiento extends AppCompatActivity {
 
     }
 
-
-    public void onCLick(View v)
-    {
-        if(v == comenzar) {
-            play();
-        }
-        else if (reproductor.isPlaying())
-        {
-            stop();
-        }
-    }
-
     public void play()
     {
 
-        // 1. Instantiate an AlertDialog.Builder with its constructor
-        AlertDialog.Builder builder = new AlertDialog.Builder(reconocimiento.this);
-
-// 2. Chain together various setter methods to set the dialog characteristics
-        builder.setMessage(R.string.action_settings)
-                .setTitle(R.string.app_name);
-
-// 3. Get the AlertDialog from create()
-        AlertDialog dialog = builder.create();
-
-
-        reproductor = new MediaPlayer();
         try
         {
-            String url="http://192.240.102.133:12197/stream";
-            reproductor.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            reproductor.setDataSource(url);
-            reproductor.prepare();
-            reproductor.start();
+            if(reproductor.isPlaying())
+            {
+                reproductor.stop();
+                reproductor.release();
+                reproductor = new MediaPlayer();
+                //Anotaciones personales al usar el release se pierde la instancia del reproductor
+                //crear un stop sin release para un pause.
+            }
+            else
+            {
+                try {
+                    //Url de donde se quiere hacer stream pueden ser audios internos tambien
+                    String url = "http://192.240.102.133:12197/stream";
+                    reproductor.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    reproductor.setDataSource(url);
+                    reproductor.prepare();
+                    reproductor.start();
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
         }
-        catch(IllegalArgumentException e) {
+        catch(Exception e) {
             e.printStackTrace();
         }
-        catch (IllegalStateException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-
-
     }
 
-
-    private void stop() {
-        if (reproductor.isPlaying()) {
-            reproductor.stop();
-            reproductor.release();
-
-        }
-    }
 
 
     @Override
