@@ -8,19 +8,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.proyectg.recognize.reconocimientodeambiente.reconocimiento$PlaceholderFragment">
 
-    <TextView
-        android:id="@+id/section_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <EditText
-        android:id="@+id/editText2"
+    <Button
+        android:id="@+id/playstart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/section_label"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="86dp"
-        android:ems="10"
-        android:inputType="textEmailAddress" />
+        android:layout_weight="1"
+        android:text="Play"
+        android:layout_marginTop="163dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

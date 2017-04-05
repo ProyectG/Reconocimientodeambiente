@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
+import android.webkit.WebView;
 import android.widget.Button;
 
 import android.widget.TextView;
@@ -45,6 +46,7 @@ public class reconocimiento extends AppCompatActivity {
 
     MediaPlayer reproductor;
     private Button comenzar;
+    WebView web;
 
 
 
@@ -59,18 +61,29 @@ public class reconocimiento extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reconocimiento);
+        try {
 
-        //Inicializo el boton que se llama playstart (gran nombre) en activity_reconocimiento.xml
-        comenzar = (Button) findViewById(R.id.playstart);
-        //generamos el evento
-        comenzar.setOnClickListener(new View.OnClickListener() {
 
-            public void onClick(View v) {
-                play(); //Inicializamos la funcion
-            }
-        });
+            //Inicializo el boton que se llama playstart (gran nombre) en activity_reconocimiento.xml
+            comenzar = (Button) findViewById(R.id.playstart);
+            //generamos el evento
+            comenzar.setOnClickListener(new View.OnClickListener() {
 
-        reproductor = new MediaPlayer();
+                public void onClick(View v) {
+                    play(); //Inicializamos la funcion
+                }
+            });
+
+            //rEPRODUCIR WEB
+            web = (WebView) findViewById(R.id.webview);
+            web.loadUrl("www.google.cl");
+
+            reproductor = new MediaPlayer();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -196,6 +209,7 @@ public class reconocimiento extends AppCompatActivity {
 
             }
             if(getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
+
                 rootView = inflater.inflate(R.layout.fragment_web, container, false);
                 TextView textView = (TextView) rootView.findViewById(R.id.section_label);
                 return rootView;
@@ -226,7 +240,7 @@ public class reconocimiento extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 2;
         }
 
         @Override
