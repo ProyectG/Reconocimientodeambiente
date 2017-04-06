@@ -26,7 +26,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 
 import android.widget.TextView;
@@ -44,9 +46,6 @@ public class reconocimiento extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
 
-    MediaPlayer reproductor;
-    private Button comenzar;
-    WebView web;
 
 
 
@@ -61,29 +60,7 @@ public class reconocimiento extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reconocimiento);
-        try {
 
-
-            //Inicializo el boton que se llama playstart (gran nombre) en activity_reconocimiento.xml
-            comenzar = (Button) findViewById(R.id.playstart);
-            //generamos el evento
-            comenzar.setOnClickListener(new View.OnClickListener() {
-
-                public void onClick(View v) {
-                    play(); //Inicializamos la funcion
-                }
-            });
-
-            //rEPRODUCIR WEB
-            web = (WebView) findViewById(R.id.webview);
-            web.loadUrl("www.google.cl");
-
-            reproductor = new MediaPlayer();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -107,43 +84,7 @@ public class reconocimiento extends AppCompatActivity {
 
     }
 
-    public void play()
-    {
 
-        try
-        {
-            if(reproductor.isPlaying())
-            {
-                reproductor.stop();
-                reproductor.release();
-                reproductor = new MediaPlayer();
-                //Anotaciones personales al usar el release se pierde la instancia del reproductor
-                //crear un stop sin release para un pause.
-            }
-            else
-            {
-                try {
-                    //Url de donde se quiere hacer stream pueden ser audios internos tambien
-                    String url = "http://192.240.102.133:12197/stream";
-                    reproductor.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                    reproductor.setDataSource(url);
-                    reproductor.prepare();
-                    reproductor.start();
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                } catch (IllegalStateException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
 
@@ -171,6 +112,7 @@ public class reconocimiento extends AppCompatActivity {
 
 
 
+
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -183,6 +125,53 @@ public class reconocimiento extends AppCompatActivity {
 
         public PlaceholderFragment() {
         }
+
+        MediaPlayer reproductor = new MediaPlayer();
+        private Button comenzar;
+        WebView web;
+        private WebView myWebView;
+
+
+        public  void play()
+        {
+
+            try
+            {
+                if(reproductor.isPlaying())
+                {
+                    reproductor.stop();
+                    reproductor.release();
+                    reproductor = new MediaPlayer();
+                    //Anotaciones personales al usar el release se pierde la instancia del reproductor
+                    //crear un stop sin release para un pause.
+                }
+                else
+                {
+                    try {
+                        //Url de donde se quiere hacer stream pueden ser audios internos tambien
+                        String url = "http://192.240.102.133:12197/stream";
+                        reproductor.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                        reproductor.setDataSource(url);
+                        reproductor.prepare();
+                        reproductor.start();
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -204,15 +193,44 @@ public class reconocimiento extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_reconocimiento, container, false);
             if(getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
                 rootView = inflater.inflate(R.layout.fragment_reconocimiento, container, false);
+                //inicializar();
                 TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+
+                comenzar = (Button) rootView.findViewById(R.id.playstart);
+                //generamos el evento
+                comenzar.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        play(); //Inicializamos la funcion
+                    }
+                });
+
                 return rootView;
 
             }
             if(getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
 
                 rootView = inflater.inflate(R.layout.fragment_web, container, false);
+
                 TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+
+                //inicializo la variable del layout rootview
+                web = (WebView) rootView.findViewById(R.id.webview);
+                //obliga a cargar la web dentro del cliente
+                 web.setWebViewClient(new WebViewClient());
+
+                //web.getSettings().setJavaScriptEnabled(true);
+                //web.setWebViewClient(new webClient());
+                web.loadUrl("http://www.niponanimeproject.com/chat");
+
+
+                //Habilita la pagina desde el inicio
+                /*WebSettings sett = web.getSettings();
+                sett.setJavaScriptEnabled(true);
+                web.loadUrl("http://google.com");
+                */
+                // inicializar2();
                 return rootView;
+
             }
 
                 //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
@@ -243,17 +261,7 @@ public class reconocimiento extends AppCompatActivity {
             return 2;
         }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "SECTION 1";
-                case 1:
-                    return "SECTION 2";
-                case 2:
-                    return "SECTION 3";
-            }
-            return null;
-        }
     }
+
+
 }
